@@ -22,7 +22,7 @@ py-cpuinfo
 hjson
 psutil
 gradio==3.48.0
-
+pymcd
 soundfile>=0.12
 pydub>=0.25
 fastdtw>=0.3
