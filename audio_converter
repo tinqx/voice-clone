@@ -1,0 +1,62 @@
+import argparse, pathlib, sys
+from typing import Optional, List, Tuple
+from pydub import AudioSegment
+
+def convert_file(in_path: pathlib.Path,
+                 out_dir: Optional[pathlib.Path],
+                 sr: int,
+                 normalize_dbfs: Optional[float]) -> pathlib.Path:
+    # pydub + ffmpeg erkennen das Format automatisch
+    audio = AudioSegment.from_file(in_path)
+
+    if normalize_dbfs is not None and audio.dBFS != float("-inf"):
+        audio = audio.apply_gain(normalize_dbfs - audio.dBFS)
+
+    # Ziel: 16-bit PCM, gewünschte Samplerate
+    audio = audio.set_frame_rate(sr).set_channels(1).set_sample_width(2)
+
+    out_base = out_dir if out_dir else in_path.parent
+    out_path = out_base / (in_path.stem + ".wav")
+    audio.export(out_path, format="wav")
+    return out_path
+
+def iter_inputs(paths: List[str], exts: Tuple[str, ...]):
+    for p in paths:
+        pth = pathlib.Path(p)
+        if pth.is_dir():
+            for ext in exts:
+                for f in pth.rglob(f"*.{ext}"):
+                    yield f
+        else:
+            if pth.suffix.lower().lstrip(".") in exts:
+                yield pth
+
+def main():
+    ap = argparse.ArgumentParser(description="Audio to WAV Converter")
+    ap.add_argument("inputs", nargs="+", help="Dateien oder Ordner")
+    ap.add_argument("--outdir", default="data/wav/original", help="Zielordner für WAVs")
+    ap.add_argument("--sr", type=int, default=22050, help="Samplerate (Hz), zB. 22050")
+    ap.add_argument("--normalize", type=float, default=None, help="Ziel-Lautheit (dBFS), zB. -3")
+    ap.add_argument("--exts", default="mp4,m4a,mp3", help="zulässige Endungen, Komma-getrennt")
+    args = ap.parse_args()
+
+    out_dir = pathlib.Path(args.outdir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    exts = tuple(e.strip().lstrip(".").lower() for e in args.exts.split(",") if e.strip())
+    converted = 0
+    try:
+        for src in iter_inputs(args.inputs, exts):
+            out = convert_file(src, out_dir, args.sr, args.normalize)
+            print(f"OK: {src} -> {out}")
+            converted += 1
+    except FileNotFoundError:
+        print("FFmpeg/ffprobe nicht gefunden.", file=sys.stderr)
+        sys.exit(1)
+
+    if converted == 0:
+        print("Passende Datei nicht gefunden.", file=sys.stderr)
+        sys.exit(2)
+
+if __name__ == "__main__":
+    main()
