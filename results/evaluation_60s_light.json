@@ -1,0 +1,43 @@
+{
+  "reference": "data\\wav\\original\\original_light.wav",
+  "candidates": {
+    "candidate_1": {
+      "file": "data\\wav\\synthetic\\voice_60s_0_0.wav",
+      "mcd_dtw_sl": 3.0752714188103027,
+      "secs_cosine": 0.33753432029952946,
+      "prosody": {
+        "f0_rmse_hz": 63.889375291743065,
+        "f0_corr": -0.0797533025193175,
+        "duration_diff_sec": 0.23219954648526078
+      }
+    },
+    "candidate_2": {
+      "file": "data\\wav\\synthetic\\voice_60s_0_1.wav",
+      "mcd_dtw_sl": 4.179053039079659,
+      "secs_cosine": 0.4142951275594054,
+      "prosody": {
+        "f0_rmse_hz": 81.30476311440128,
+        "f0_corr": 0.20129075470704086,
+        "duration_diff_sec": 0.5804988662131519
+      }
+    },
+    "candidate_3": {
+      "file": "data\\wav\\synthetic\\voice_60s_0_2.wav",
+      "mcd_dtw_sl": 3.1467180759803273,
+      "secs_cosine": 0.223481023788533,
+      "prosody": {
+        "f0_rmse_hz": 63.548268933203396,
+        "f0_corr": -0.34320169658239214,
+        "duration_diff_sec": 0.37151927437641724
+      }
+    }
+  },
+  "summary": {
+    "number_of_candidates": 3,
+    "mean_mcd_dtw_sl": 3.467014177956763,
+    "mean_secs_cosine": 0.32510349054915594,
+    "mean_f0_rmse_hz": 69.58080244644925,
+    "mean_f0_corr": -0.0738880814648896,
+    "mean_duration_diff_sec": 0.39473922902494335
+  }
+}
